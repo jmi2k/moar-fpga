@@ -1,3 +1,6 @@
+`include "UART/TX.v"
+`include "UART/RX.v"
+
 module UART #(
 	parameter
 		Bauds = 115_200,
@@ -5,43 +8,44 @@ module UART #(
 		Wstop = 1,
 		Fclk  = 'bx
 ) (
-	output reg TXD = 1,
-
-	input [Wdata-1:0] DIN,
+	input  [Wdata-1:0] DIN,
+	output [Wdata-1:0] DOUT,
 
 	input
 		CLK,
 		RST,
+		RXD,
 		OE,
 
 	output
-		RDY
+		TXD,
+		RDY,
+		INT
 );
-	localparam
-		/*       Start + Data  + Stop */
-		Wframe = 1     + Wdata + Wstop,
-		Ntick  = Fclk/Bauds;
+	TX #(
+		.Bauds(Bauds),
+		.Wdata(Wdata),
+		.Wstop(Wstop),
+		.Fclk(Fclk)
+	) tx(
+		.CLK(CLK),
+		.RST(RST),
+		.DIN(DIN),
+		.TXD(TXD),
+		.OE(OE),
+		.RDY(RDY)
+	);
 
-	reg  [$clog2(Ntick)-1:0]  tick  = Ntick;
-	reg  [$clog2(Wframe)-1:0] index = Wframe;
-	reg  [Wdata-1:0]          data  = 'bx;
-	wire [Wframe-1:0]         frame = {{Wstop{1'b1}}, data, 1'b0};
-
-	assign
-		RDY = !OE && index == Wframe;
-
-	always @(posedge CLK)
-		tick <= tick == 0 ? Ntick : tick-1;
-
-	always @(posedge CLK)
-		if (index < Wframe) begin
-			TXD <= frame[index];
-			if (tick == 0)
-				index <= index+1;
-		end else if (OE) begin
-			data <= DIN;
-			index <= 0;
-			TXD <= frame[0];
-		end else
-			TXD <= 1;
+	RX #(
+		.Bauds(Bauds),
+		.Wdata(Wdata),
+		.Wstop(Wstop),
+		.Fclk(Fclk)
+	) rx(
+		.CLK(CLK),
+		.RST(RST),
+		.DOUT(DOUT),
+		.RXD(RXD),
+		.INT(INT)
+	);
 endmodule

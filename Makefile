@@ -4,16 +4,19 @@ TEST  = SoC
 
 all: $(TOP).bit
 
-test: $(TEST).vcd
+diagram: rtl/$(TEST).v
+	yosys -q -p "read -incdir rtl; show -colors `date +%H%M%S`" $<
+
+wave: test/$(TEST).vcd
 	gtkwave $<
 
 dfu: $(TOP).bit
 	dfu-util -D $<
 
 test/%: test/%.v
-	iverilog -Wall -Irtl -o $@ $<
+	iverilog -D'DUMP="$@.vcd"' -Wall -Irtl -o $@ $<
 
-%.vcd: test/%
+%.vcd: %
 	vvp $<
 
 %.hex: %.png
@@ -22,7 +25,7 @@ test/%: test/%.v
 		| sed 's|^|@|' > $@
 
 %.hex: %.txt
-	(cat $< | sed 's|$$|\r|'; printf "\0") \
+	(printf "\0" | cat $< -) \
 		| od -v -A x -t x1 \
 		| sed 's|^|@|' > $@
 
@@ -50,6 +53,6 @@ clean:
 		$(TOP).bit \
 		$(TOP).config \
 		$(TOP).json \
-		$(TEST).vcd
+		test/$(TEST).vcd
 
-.PHONY: all test dfu clean
+.PHONY: all diagram wave dfu clean

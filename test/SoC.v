@@ -20,7 +20,7 @@ module SoC_test;
 	);
 
 	initial begin
-		$dumpfile("SoC.vcd");
+		$dumpfile(`DUMP);
 		$dumpvars(0, SoC_test);
 
 		#300_000 $finish;
