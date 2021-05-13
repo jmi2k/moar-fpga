@@ -3,7 +3,7 @@
 module SoC #(
 	parameter
 		Bauds = 300,
-		Fclk  = 48_000_000
+		Fclk  = `FCLK
 ) (
 	output [2:0] RGB_,
 

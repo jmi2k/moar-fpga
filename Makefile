@@ -1,11 +1,15 @@
 BOARD = orangecrab_r0.2
+FCLK  = 48000000
 TOP   = SoC
 TEST  = SoC
 
 all: $(TOP).bit
 
 diagram: rtl/$(TEST).v
-	yosys -q -p "read -incdir rtl; show -colors `date +%H%M%S`" $<
+	yosys -q \
+		-D'FCLK=${FCLK}' \
+		-p "read -incdir rtl; show -colors `date +%H%M%S`" \
+		$<
 
 wave: test/$(TEST).vcd
 	gtkwave $<
@@ -14,7 +18,11 @@ dfu: $(TOP).bit
 	dfu-util -D $<
 
 test/%: test/%.v
-	iverilog -D'DUMP="$@.vcd"' -Wall -Irtl -o $@ $<
+	iverilog -Wall -Irtl \
+		-D'DUMP="$@.vcd"' \
+		-D'FCLK=${FCLK}' \
+		-o $@ \
+		$<
 
 %.vcd: %
 	vvp $<
@@ -30,7 +38,10 @@ test/%: test/%.v
 		| sed 's|^|@|' > $@
 
 %.json: %.v
-	yosys -q -p 'read -incdir rtl; synth_ecp5 -json $@' $<
+	yosys -q \
+		-D'FCLK="${FCLK}"' \
+		-p 'read -incdir rtl; synth_ecp5 -json $@' \
+		$<
 
 %.config: %.json
 	nextpnr-ecp5 \
@@ -43,7 +54,6 @@ test/%: test/%.v
 %.bit: rtl/%.config
 	ecppack \
 		--compress \
-		--freq 38.8 \
 		--input $< \
 		--bit $@
 

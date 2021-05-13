@@ -9,9 +9,12 @@ module SoC_test;
 		clk = 1,
 		rst = 0;
 
+	localparam
+		T = 1_000_000_000 / `FCLK;
+
 	SoC #(
 		.Bauds(115_200),
-		.Fclk(50_000_000)
+		.Fclk(`FCLK)
 	) soc(
 		.CLK(clk),
 		.RST_(!rst),
@@ -27,5 +30,5 @@ module SoC_test;
 	end
 
 	always
-		#10 clk <= !clk;
+		#(T/2) clk <= !clk;
 endmodule
