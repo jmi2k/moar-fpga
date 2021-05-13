@@ -38,7 +38,7 @@ test/%: test/%.v
 		--textcfg $@ \
 		--25k \
 		--package CSFBGA285 \
-		--lpf ${BOARD}.pcf
+		--lpf ${BOARD}.lpf
 
 %.bit: rtl/%.config
 	ecppack \
