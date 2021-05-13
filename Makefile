@@ -3,6 +3,8 @@ PACKAGE = CABGA256
 FCLK    = 25000000
 TOP     = SoC
 TEST    = SoC
+TTY     = /dev/ttyACM0
+BAUDS   = 9600
 
 all: $(TOP).bit
 
@@ -17,6 +19,9 @@ wave: test/$(TEST).vcd
 
 dfu: $(TOP).bit
 	dfu-util -D $<
+
+serial:
+	picocom -q -b ${BAUDS} ${TTY}
 
 test/%: test/%.v
 	iverilog -Wall -Irtl \
@@ -60,9 +65,9 @@ test/%: test/%.v
 clean:
 	rm -f \
 		EVA.hex \
-		$(TOP).bit \
-		$(TOP).config \
-		$(TOP).json \
-		test/$(TEST).vcd
+		*.bit \
+		*.config \
+		*.json \
+		test/*.vcd
 
 .PHONY: all diagram wave dfu clean
