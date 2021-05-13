@@ -2,8 +2,7 @@ module RX #(
 	parameter
 		Bauds = 'bx,
 		Wdata = 'bx,
-		Wstop = 'bx,
-		Fclk  = 'bx
+		Wstop = 'bx
 ) (
 	output reg [Wdata-1:0] DOUT = 'bx,
 	output reg             INT  = 0,
@@ -16,7 +15,7 @@ module RX #(
 	localparam
 		/*       Start + Data  + Stop */
 		Wframe = 1     + Wdata + Wstop,
-		Nticks = Fclk/Bauds;
+		Nticks = `FCLK/Bauds;
 
 	reg [$clog2(Nticks)-1:0] ticks = Nticks/2;
 	reg [$clog2(Wframe)-1:0] index = Wframe;

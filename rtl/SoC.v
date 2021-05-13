@@ -2,8 +2,7 @@
 
 module SoC #(
 	parameter
-		Bauds = 9_600,
-		Fclk  = `FCLK
+		Bauds = 9_600
 ) (
 	input
 		CLK,
@@ -12,20 +11,18 @@ module SoC #(
 	output
 		TXD
 );
-	reg [30:0] index = 0;
-	reg  [7:0] din   = "0";
+	reg  [7:0] din   = "\0";
 	reg        oe    = 0;
 
 	wire [7:0]
 		dout;
 
 	wire
-		rdy,
-		int;
+		int,
+		rdy;
 
 	UART #(
-		.Bauds(Bauds),
-		.Fclk(Fclk)
+		.Bauds(Bauds)
 	) uart(
 		.CLK(CLK),
 		.RST(0),
@@ -39,6 +36,7 @@ module SoC #(
 	);
 
 	always @(posedge CLK) begin
-		oe <= 1;
+		din <= dout;
+		oe <= int;
 	end
 endmodule

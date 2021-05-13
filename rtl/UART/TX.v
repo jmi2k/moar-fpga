@@ -2,11 +2,10 @@ module TX #(
 	parameter
 		Bauds = 'bx,
 		Wdata = 'bx,
-		Wstop = 'bx,
-		Fclk  = 'bx
+		Wstop = 'bx
 ) (
-	input
-		[Wdata-1:0] DIN,
+	input [Wdata-1:0]
+		DIN,
 
 	input
 		CLK,
@@ -22,7 +21,7 @@ module TX #(
 	localparam
 		/*       Start + Data  + Stop */
 		Wframe = 1     + Wdata + Wstop,
-		Nticks = Fclk/Bauds;
+		Nticks = `FCLK/Bauds;
 
 	reg [$clog2(Nticks)-1:0] ticks = Nticks;
 	reg [$clog2(Wframe)-1:0] index = Wframe;
@@ -46,7 +45,7 @@ module TX #(
 	 * Update bit position
 	 */
 	always @(posedge CLK)
-		case(1)
+		case (1)
 			RST:    index <= Wframe;
 			OE:     index <= 0;
 			!ticks: index <= index+1;

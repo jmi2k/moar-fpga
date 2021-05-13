@@ -1,7 +1,8 @@
-BOARD = orangecrab_r0.2
-FCLK  = 48000000
-TOP   = SoC
-TEST  = SoC
+BOARD   = icesugar_pro
+PACKAGE = CABGA256
+FCLK    = 25000000
+TOP     = SoC
+TEST    = SoC
 
 all: $(TOP).bit
 
@@ -39,7 +40,7 @@ test/%: test/%.v
 
 %.json: %.v
 	yosys -q \
-		-D'FCLK="${FCLK}"' \
+		-D'FCLK=${FCLK}' \
 		-p 'read -incdir rtl; synth_ecp5 -json $@' \
 		$<
 
@@ -48,12 +49,11 @@ test/%: test/%.v
 		--json $< \
 		--textcfg $@ \
 		--25k \
-		--package CSFBGA285 \
+		--package ${PACKAGE} \
 		--lpf ${BOARD}.lpf
 
 %.bit: rtl/%.config
 	ecppack \
-		--compress \
 		--input $< \
 		--bit $@
 
