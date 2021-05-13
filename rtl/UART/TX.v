@@ -5,9 +5,8 @@ module TX #(
 		Wstop = 'bx,
 		Fclk  = 'bx
 ) (
-	output reg TXD = 1,
-
-	input [Wdata-1:0] DIN,
+	input
+		[Wdata-1:0] DIN,
 
 	input
 		CLK,
@@ -15,7 +14,10 @@ module TX #(
 		OE,
 
 	output
-		RDY
+		RDY,
+
+	output reg
+		TXD = 1
 );
 	localparam
 		/*       Start + Data  + Stop */

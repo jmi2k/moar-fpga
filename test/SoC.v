@@ -2,8 +2,8 @@
 `timescale 1ns/100ps
 
 module SoC_test;
-	wire [2:0] rgb_;
-	wire       txd;
+	wire
+		txd;
 
 	reg
 		clk = 1,
@@ -13,13 +13,11 @@ module SoC_test;
 		T = 1_000_000_000 / `FCLK;
 
 	SoC #(
-		.Bauds(115_200),
+		.Bauds(9_600),
 		.Fclk(`FCLK)
 	) soc(
 		.CLK(clk),
-		.RST_(!rst),
-		.TXD(txd),
-		.RGB_(rgb_)
+		.TXD(txd)
 	);
 
 	initial begin

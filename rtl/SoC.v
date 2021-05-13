@@ -2,28 +2,22 @@
 
 module SoC #(
 	parameter
-		Bauds = 300,
+		Bauds = 9_600,
 		Fclk  = `FCLK
 ) (
-	output [2:0] RGB_,
-
 	input
 		CLK,
-		RST_,
 		RXD,
 
 	output
-		MISO,
 		TXD
 );
-	reg  [30:0] index = 0;
-	reg  [7:0]  din   = "\0";
-	reg  [2:0]  rgb   = 0;
-	wire [7:0]  dout;
+	reg [30:0] index = 0;
+	reg  [7:0] din   = "0";
+	reg        oe    = 0;
 
-	reg
-		blink = 0,
-		oe    = 0;
+	wire [7:0]
+		dout;
 
 	wire
 		rdy,
@@ -34,7 +28,7 @@ module SoC #(
 		.Fclk(Fclk)
 	) uart(
 		.CLK(CLK),
-		.RST(!RST_),
+		.RST(0),
 		.DIN(din),
 		.DOUT(dout),
 		.OE(oe),
@@ -44,12 +38,7 @@ module SoC #(
 		.INT(int)
 	);
 
-	assign
-		RGB_ = ~rgb,
-		MISO = blink;
-
 	always @(posedge CLK) begin
-		din <= dout;
-		oe <= int;
+		oe <= 1;
 	end
 endmodule
