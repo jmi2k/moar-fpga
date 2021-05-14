@@ -27,7 +27,6 @@ module UART #(
 		.Wstop(Wstop)
 	) tx(
 		.CLK(CLK),
-		.RST(RST),
 		.DIN(DIN),
 		.TXD(TXD),
 		.OE(OE),
@@ -40,7 +39,6 @@ module UART #(
 		.Wstop(Wstop)
 	) rx(
 		.CLK(CLK),
-		.RST(RST),
 		.DOUT(DOUT),
 		.RXD(RXD),
 		.INT(INT)

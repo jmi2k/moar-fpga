@@ -9,7 +9,6 @@ module TX #(
 
 	input
 		CLK,
-		RST,
 		OE,
 
 	output
@@ -28,7 +27,7 @@ module TX #(
 	reg [Wdata-1:0]          data  = 'bx;
 
 	assign
-		RDY = !RST && !OE;
+		RDY = !OE;
 
 	/*
 	 * Generate timing
@@ -36,7 +35,6 @@ module TX #(
 	always @(posedge CLK)
 		if (index < Wframe)
 			case (1)
-				RST:     ticks <= Nticks;
 				!ticks:  ticks <= Nticks;
 				default: ticks <= ticks-1;
 			endcase
@@ -46,7 +44,6 @@ module TX #(
 	 */
 	always @(posedge CLK)
 		case (1)
-			RST:    index <= Wframe;
 			OE:     index <= 0;
 			!ticks: index <= index+1;
 		endcase
@@ -56,7 +53,6 @@ module TX #(
 	 */
 	always @(posedge CLK)
 		case (1)
-			RST:             TXD <= 1;
 			OE:              data <= DIN;
 			index == 0:      TXD <= 0;
 			index < 1+Wdata: TXD <= data[index-1];

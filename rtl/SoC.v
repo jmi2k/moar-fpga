@@ -37,7 +37,6 @@ module SoC #(
 		.Bauds(Bauds)
 	) uart(
 		.CLK(CLK),
-		.RST('b0),
 		.DIN(rtou),
 		.DOUT(uout),
 		.OE(uhasc),

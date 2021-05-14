@@ -9,7 +9,6 @@ module RX #(
 
 	input
 		CLK,
-		RST,
 		RXD
 );
 	localparam
@@ -26,7 +25,6 @@ module RX #(
 	always @(posedge CLK)
 		if (index < Wframe)
 			case (1)
-				RST:     ticks <= Nticks/2;
 				!ticks:  ticks <= index < Wframe-1 ? Nticks : Nticks/2;
 				default: ticks <= ticks-1;
 			endcase
@@ -35,14 +33,12 @@ module RX #(
 	 * Update bit position
 	 */
 	always @(posedge CLK)
-		if (RST)
-			index <= Wframe;
-		else if (!RXD && index == Wframe)
+		if (!RXD && index == Wframe)
 			index <= 0;
 		else if (!ticks)
 			case (1)
 				index == 0:      index <= !RXD ? index+1 : Wframe;
-				index < Wdata+1: index <= index+1;
+				index < 1+Wdata: index <= index+1;
 				index < Wframe:  index <=  RXD ? index+1 : Wframe;
 			endcase
 
@@ -50,12 +46,12 @@ module RX #(
 	 * Fetch bits from RXD, build data on DOUT, raise INT when done
 	 */
 	always @(posedge CLK)
-		if (RST || INT)
+		if (INT)
 			INT <= 0;
 		else if (!ticks)
 			case (1)
 				index == 0:        INT <= 0;
-				index < Wdata+1:   DOUT[index-1] <= RXD;
+				index < 1+Wdata:   DOUT[index-1] <= RXD;
 				index >= Wframe-1: INT <= 1;
 			endcase
 endmodule
