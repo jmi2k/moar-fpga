@@ -21,7 +21,7 @@ dfu: $(TOP).bit
 	dfu-util -D $<
 
 serial:
-	picocom -q -b ${BAUDS} ${TTY}
+	picocom -q -b ${BAUDS} --imap lfcrlf ${TTY}
 
 test/%: test/%.v
 	iverilog -Wall -Irtl \
