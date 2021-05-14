@@ -20,12 +20,12 @@ module SoC #(
 		uout;
 
 	wire
-		rdy,
-		uhasc;
+		uhasc,
+		urdy;
 
 	BRAM1 #(
 		.Hexfile("hello.hex")
-	) bram1(
+	) text(
 		.CLK(CLK),
 		.ADDR(addr),
 		.WR('b0),
@@ -39,8 +39,8 @@ module SoC #(
 		.CLK(CLK),
 		.DIN(rtou),
 		.DOUT(uout),
-		.OE(uhasc),
-		.RDY(rdy),
+		.OE(urdy),
+		.RDY(urdy),
 		.TXD(TXD),
 		.RXD(RXD),
 		.INT(uhasc)
@@ -50,7 +50,7 @@ module SoC #(
 	 * Step through the stored string
 	 */
 	always @(posedge CLK) begin
-		if (uhasc) rtou <= rout;
-		if (|rtou) addr <= addr+uhasc;
+		if (urdy)  rtou = rout;
+		if (|rtou) addr <= addr+urdy;
 	end
 endmodule

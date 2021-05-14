@@ -33,7 +33,7 @@ module RX #(
 	 * Update bit position
 	 */
 	always @(posedge CLK)
-		if (!RXD && index == Wframe)
+		if (!RXD & index == Wframe)
 			index <= 0;
 		else if (!ticks)
 			case (1)

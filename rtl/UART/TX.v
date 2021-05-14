@@ -27,7 +27,7 @@ module TX #(
 	reg [Wdata-1:0]          data  = 'bx;
 
 	assign
-		RDY = !OE;
+		RDY = index == Wframe;
 
 	/*
 	 * Generate timing
