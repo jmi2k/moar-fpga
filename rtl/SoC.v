@@ -29,8 +29,7 @@ module SoC #(
 		uout;
 
 	wire
-		hb,
-		vb,
+		hb, vb,
 		ven,
 		uhasc,
 		urdy,

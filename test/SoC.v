@@ -6,15 +6,13 @@ module SoC_test;
 		txd;
 
 	reg
-		clk = 1,
-		rst = 0;
+		clk = 0;
 
 	localparam
 		T = 1_000_000_000 / `FCLK;
 
 	SoC #(
-		.Bauds(9_600),
-		.Fclk(`FCLK)
+		.Bauds(9_600)
 	) soc(
 		.CLK(clk),
 		.TXD(txd)

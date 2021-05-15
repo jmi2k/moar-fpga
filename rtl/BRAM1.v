@@ -11,11 +11,14 @@ module BRAM1 #(
 		CLK,
 		WR,
 
-	output reg [Wdata-1:0]
+	output [Wdata-1:0]
 		DOUT
 );
 	reg [Wdata-1:0]
 		mem [Ncells-1:0];
+
+	assign
+		DOUT = WR ? DIN : mem[ADDR];
 
 	/*
 	 * Load initial data into memory if provided
@@ -27,9 +30,6 @@ module BRAM1 #(
 	 * Read/write data
 	 */
 	always @(posedge CLK)
-		if (WR) begin
-			DOUT <= DIN;
+		if (WR)
 			mem[ADDR] <= DIN;
-		end else
-			DOUT <= mem[ADDR];
 endmodule
