@@ -20,9 +20,9 @@ module SoC #(
 	reg [18:0] taddr = 0;
 	reg  [7:0] rtou  = 'hff;
 
-	wire [$clog2(W*H)-1:0] vaddr;
-	wire   [$clog2(W)-1:0] x;
-	wire   [$clog2(H)-1:0] y;
+	wire [$bits(W*H)-1:0] vaddr;
+	wire   [$bits(W)-1:0] x;
+	wire   [$bits(H)-1:0] y;
 
 	wire [7:0]
 		tout,

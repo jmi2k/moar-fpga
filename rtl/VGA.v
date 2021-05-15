@@ -16,8 +16,8 @@ module VGA #(
 		HB, VB,
 		HS_, VS_,
 
-	output reg [$clog2(W)-1:0] X = 0,
-	output reg [$clog2(H)-1:0] Y = 0
+	output reg [$bits(W)-1:0] X = 0,
+	output reg [$bits(H)-1:0] Y = 0
 );
 	wire
 		xmax = X == W-1 + Hbp + Hsync + Hfp,

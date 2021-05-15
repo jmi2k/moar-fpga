@@ -16,8 +16,8 @@ module RX #(
 		Wframe = 1     + Wdata + Wstop,
 		Nticks = `FCLK/Bauds;
 
-	reg [$clog2(Nticks)-1:0] ticks = Nticks/2;
-	reg [$clog2(Wframe)-1:0] index = Wframe;
+	reg [$bits(Nticks)-1:0] ticks = Nticks/2;
+	reg [$bits(Wframe)-1:0] index = Wframe;
 
 	/*
 	 * Generate timing

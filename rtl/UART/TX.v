@@ -22,9 +22,9 @@ module TX #(
 		Wframe = 1     + Wdata + Wstop,
 		Nticks = `FCLK/Bauds;
 
-	reg [$clog2(Nticks)-1:0] ticks = Nticks;
-	reg [$clog2(Wframe)-1:0] index = Wframe;
-	reg [Wdata-1:0]          data  = 'bx;
+	reg [$bits(Nticks)-1:0] ticks = Nticks;
+	reg [$bits(Wframe)-1:0] index = Wframe;
+	reg         [Wdata-1:0] data  = 'bx;
 
 	assign
 		RDY = index == Wframe;

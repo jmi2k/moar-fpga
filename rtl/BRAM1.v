@@ -4,8 +4,8 @@ module BRAM1 #(
 		Ncells  = 1_024,
 		Wdata   = 8
 ) (
-	input [$clog2(Ncells)-1:0] ADDR,
-	input          [Wdata-1:0] DIN,
+	input [$bits(Ncells)-1:0] ADDR,
+	input         [Wdata-1:0] DIN,
 
 	input
 		CLK,
