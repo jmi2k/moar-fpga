@@ -17,6 +17,9 @@ module SoC #(
 		R, G, B,
 		TXD
 );
+	reg [7:0] text [1_024:0];
+	reg       vram   [W*H:0];
+
 	reg [18:0] taddr = 0;
 	reg  [7:0] rtou  = 'hff;
 
@@ -30,9 +33,9 @@ module SoC #(
 
 	wire
 		hb, vb,
-		ven,
 		uhasc,
 		urdy,
+		ven,
 		vout;
 
 	assign
@@ -40,29 +43,9 @@ module SoC #(
 		R     = ven & vout,
 		G     = ven & vout,
 		B     = ven & vout,
-		vaddr = W*y + x;
-
-	BRAM1 #(
-		.Hexfile("hello.hex")
-	) text(
-		.CLK(CLK),
-		.ADDR(taddr),
-		.WR('b0),
-		.DIN('b0),
-		.DOUT(tout)
-	);
-
-	BRAM1 #(
-		.Hexfile("EVA.hex"),
-		.Ncells(W*H),
-		.Wdata(1)
-	) vram(
-		.CLK(CLK),
-		.ADDR(vaddr),
-		.WR('b0),
-		.DIN('b0),
-		.DOUT(vout)
-	);
+		tout  = text[taddr],
+		vaddr = W*y + x,
+		vout  = vram[vaddr];
 
 	UART #(
 		.Bauds(Bauds)
@@ -86,6 +69,11 @@ module SoC #(
 		.X(x),
 		.Y(y)
 	);
+
+	initial begin
+		$readmemh("hello.hex", text);
+		$readmemh("EVA.hex", vram);
+	end
 
 	/*
 	 * Step through the stored string
