@@ -1,4 +1,5 @@
 `include "BRAM1.v"
+`include "Delay.v"
 `include "UART.v"
 `include "VGA.v"
 
@@ -17,21 +18,23 @@ module SoC #(
 		R, G, B,
 		TXD
 );
-	reg [7:0] text [1_024:0];
-	reg       vram   [W*H:0];
+	reg [7:0] text [0:1_024];
+	reg       vram [0:W*H];
 
 	reg [18:0] taddr = 0;
-	reg  [7:0] rtou  = 'hff;
+	reg  [7:0] rtou  = 0;
+	reg        pixel = 'bx;
 
 	wire [$bits(W*H)-1:0] vaddr;
 	wire   [$bits(W)-1:0] x;
 	wire   [$bits(H)-1:0] y;
 
 	wire [7:0]
-		tout,
-		uout;
+		tout;
 
 	wire
+		hbraw, vbraw,
+		hsraw_, vsraw_,
 		hb, vb,
 		uhasc,
 		urdy,
@@ -40,19 +43,16 @@ module SoC #(
 
 	assign
 		ven   = !hb & !vb,
-		R     = ven & vout,
-		G     = ven & vout,
-		B     = ven & vout,
-		tout  = text[taddr],
-		vaddr = W*y + x,
-		vout  = vram[vaddr];
+		R     = ven & pixel,
+		G     = ven & pixel,
+		B     = ven & pixel,
+		vaddr = W*y + x;
 
 	UART #(
 		.Bauds(Bauds)
 	) uart(
 		.CLK(CLK),
 		.DIN(rtou),
-		.DOUT(uout),
 		.OE(urdy),
 		.RDY(urdy),
 		.TXD(TXD),
@@ -62,12 +62,20 @@ module SoC #(
 
 	VGA vga(
 		.CLK(CLK),
-		.HB(hb),
-		.VB(vb),
-		.HS_(HS_),
-		.VS_(VS_),
+		.HB(hbraw),
+		.VB(vbraw),
+		.HS_(hsraw_),
+		.VS_(vsraw_),
 		.X(x),
 		.Y(y)
+	);
+
+	Delay #(
+		.Wdata(4)
+	) delay(
+		.CLK(CLK),
+		.IN( {hbraw, vbraw, hsraw_, vsraw_}),
+		.OUT({hb,    vb,    HS_,    VS_})
 	);
 
 	initial begin
@@ -78,8 +86,16 @@ module SoC #(
 	/*
 	 * Step through the stored string
 	 */
+	always @(posedge CLK)
+		if (|rtou)
+			taddr <= taddr+urdy;
+
+	/*
+	 * Retrieve data from ROM
+	 */
 	always @(posedge CLK) begin
-		if (urdy)  rtou = tout;
-		if (|rtou) taddr <= taddr+urdy;
+		pixel <= vram[vaddr];
+		rtou  <= text[taddr];
 	end
+
 endmodule
