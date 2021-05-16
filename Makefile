@@ -34,14 +34,11 @@ test/%: test/%.v
 	vvp $<
 
 %.hex: %.png
-	./png2hex.py $< \
-		| od -v -A x -t x1 \
-		| sed 's|^|@|' > $@
+	./png2hex.py $< > $@
 
 %.hex: %.txt
 	(printf "\0" | cat $< -) \
-		| od -v -A x -t x1 \
-		| sed 's|^|@|' > $@
+		| od -v -A n -t x1
 
 %.json: %.v
 	yosys -q \
@@ -64,7 +61,7 @@ test/%: test/%.v
 
 clean:
 	rm -f \
-		EVA.hex \
+		*.hex \
 		*.bit \
 		*.config \
 		*.json \

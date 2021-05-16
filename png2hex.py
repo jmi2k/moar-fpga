@@ -1,8 +1,10 @@
 #!/bin/python3
 
-import PIL.Image as Image
+from PIL import Image
 import sys
 
 image  = Image.open(sys.argv[1])
-pixels = bytes(image.getdata())
-sys.stdout.buffer.write(pixels)
+pixels = image.getdata()
+bits   = [format(p, '01b') for p in pixels]
+
+print('\n'.join(bits))
