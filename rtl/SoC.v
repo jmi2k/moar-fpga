@@ -1,4 +1,3 @@
-`include "BRAM1.v"
 `include "Delay.v"
 `include "UART.v"
 `include "VGA.v"
